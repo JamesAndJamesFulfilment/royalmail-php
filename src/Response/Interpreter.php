@@ -6,12 +6,12 @@ use \Symfony\Component\Yaml\Yaml;
 use \RoyalMail\Exception\StructureSkipFieldException as SkipException;
 
 class Interpreter extends \ArrayObject {
-  
+
   use \RoyalMail\Validator\Validates;
   use \RoyalMail\Filter\Filters;
   use \RoyalMail\Helper\Structure;
 
-  protected 
+  protected
     $response_instance = NULL,
     $response_schema   = NULL,
     $schema            = NULL,
@@ -28,14 +28,14 @@ class Interpreter extends \ArrayObject {
 
 
   function succeeded()   { return $this->succeeded; }
- 
-  function hasIssues()    { return $this->hasErrors() || $this->hasWarnings(); } 
+
+  function hasIssues()    { return $this->hasErrors() || $this->hasWarnings(); }
   function hasErrors()    { return count($this->getErrors()) > 0; }
   function getErrors()    { return $this->errors; }
   function hasWarnings()  { return count($this->getWarnings()) > 0; }
   function getWarnings()  { return $this->warnings; }
 
-  function hasDebugInfo() { return is_null($this->debug_info); }
+  function hasDebugInfo() { return !is_null($this->debug_info); }
 
   function hasBinaries() {
     foreach ($this->getBinaryKeys() as $bin) if (! empty($this[$bin])) return TRUE;
@@ -96,7 +96,7 @@ class Interpreter extends \ArrayObject {
     foreach ($schema['properties'] as $k => $map) {
       $built = self::addProperty($built, $map, $k, NULL, [], $helper);
     }
-    
+
     return $built;
   }
 
@@ -113,8 +113,8 @@ class Interpreter extends \ArrayObject {
     if (! empty($schema['_multiple']) && count($stripped = self::stripMeta($schema))) {
 
       $schema = array_diff_key($schema, $stripped); // FIXME: This is patching to bypass the default Structure multi property handling
-      unset($schema['_multiple']);                  
-      
+      unset($schema['_multiple']);
+
       $nest = [];
 
       foreach ($val as $multi) {
@@ -164,7 +164,7 @@ class Interpreter extends \ArrayObject {
 
 
   function getDebugInfo() { return $this->debug_info; }
-  
+
   function fail($exception) {
     $this->errors[] = ['message' => 'API Connection Error: more details available in debug info.'];
 

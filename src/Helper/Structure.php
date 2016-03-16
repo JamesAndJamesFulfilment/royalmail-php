@@ -13,13 +13,13 @@ trait Structure {
       $val = self::processProperty($schema, $val, $defaults, $helper);
 
     } catch (\RoyalMail\Exception\ValidatorException $e) {
-      $errors[] = $key . ': ' . $e->getMessage(); 
+      $errors[] = $key . ': ' . $e->getMessage();
 
     } catch (\RoyalMail\Exception\RequestException $re) {
       foreach ($re->getErrors() as $k_nested => $v) $errors[$k . ':' . $k_nested] = $v;
-    
+
     } catch (SkipException $e) { return $arr; } // Exception is notification that rules exclude this field.
-     
+
 
     return self::addToArray($arr, $val, $key, @$schema['_key']);
   }
@@ -52,10 +52,13 @@ trait Structure {
   static function processMultipleProperty($schema, $val, $defaults, $helper = NULL) {
     $single_schema = array_diff_key($schema, ['_multiple' => 1, '_key' => 1]);
     $multi_schema  = $schema['_multiple'];
-    
+
     if (isset($multi_schema['nest_key'])) $single_schema['_key'] = '~/' . $multi_schema['nest_key'];
 
-    if (is_null($val)) $val = []; // CHECK: required param so always set, but if this is null may not want to be here in the first place.
+    if (is_null($val))
+    {
+      throw new SkipException;
+    }
 
     $multi_values = [];
 
@@ -80,11 +83,11 @@ trait Structure {
 
   static function validateAndFilter($schema, $val, $defaults, $helper = NULL) {
     $schema = array_merge((array) $defaults, $schema);
-    
+
     $val = self::filter($val, $schema, $type = 'pre', $helper);
 
     self::validate($schema, $val, $helper);
-      
+
     return self::filter($val, $schema, $type = 'post', $helper);
   }
 
@@ -97,13 +100,13 @@ trait Structure {
       $top_ref = & $arr;
 
       foreach (explode('/', $path) as $step) {   // If there is a _key: this/that path value it replaces the $key value entirely.
-        if ($step === '~') $step = $key;                   
-        
+        if ($step === '~') $step = $key;
+
         if (empty($top_ref[$step])) $top_ref[$step] = [];  // New elements can be added to existing paths, so only create what isn't there.
-        
+
         $top_ref = & $top_ref[$step];
       }
-    
+
     } else $top_ref = & $arr[$key];
 
     $top_ref = $val;

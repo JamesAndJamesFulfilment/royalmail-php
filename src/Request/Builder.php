@@ -7,7 +7,7 @@ use \Symfony\Component\Yaml\Yaml;
 
 /**
  * Request builder utility - implemented with static methods as there shouldn't be any state or side-effects at this level.
- * 
+ *
  */
 class Builder {
   use \RoyalMail\Validator\Validates;
@@ -17,11 +17,11 @@ class Builder {
 
   /**
    * Build an individual request from schema and params.
-   * 
+   *
    * @param string       $request_name
    * @param array        $params
    * @param \ArrayObject $helper
-   * 
+   *
    * @return array
    */
   static function build($request_name, $params, $helper = NULL) {
@@ -31,12 +31,12 @@ class Builder {
 
   /**
    * Process the schema and params to validate and structure a request fragment.
-   * 
+   *
    * @param array $schema instructions for processing the params.
    * @param array $params values to work with
-   * 
+   *
    * @throws \RoyalMail\Exception\RequestException on validation failure with details of all failing field values.
-   * 
+   *
    * @return array values structured for API request.
    */
   static function processSchema($schema, $params, $helper = NULL) {
@@ -53,9 +53,9 @@ class Builder {
       foreach ($schema['properties'] as $k => $v) {
         $built = self::addProperty($built, $schema['properties'][$k], $k, @$params[$k], $schema['defaults'], $helper);
       }
-    
+
     } catch (\RoyalMail\Exception\ValidatorException $e) {
-      $errors[$k] = $k . ': ' . $e->getMessage(); 
+      $errors[$k] = $k . ': ' . $e->getMessage();
 
     } catch (\RoyalMail\Exception\RequestException $re) {
       foreach ($re->getErrors() as $k_nested => $v) $errors[$k . ':' . $k_nested] = $v;
@@ -73,9 +73,9 @@ class Builder {
 
 
   /**
-   * Request schemas are kept in YML files.   
+   * Request schemas are kept in YML files.
    * These have the structure, validation, and defaults.
-   * 
+   *
    * @return array
    */
   static function getRequestSchema($request_name) {

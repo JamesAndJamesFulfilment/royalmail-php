@@ -18,7 +18,7 @@ use \RoyalMail\Response\Interpreter    as Interpreter;
 
 
 class RoyalMail {
-  protected 
+  protected
     $connector   = NULL,
     $data_helper = NULL,
     $dev_helper  = NULL,
@@ -50,9 +50,9 @@ class RoyalMail {
 
   /**
    * Create New
-   * 
+   *
    * @param array $args This should contain security details and config default overrides.
-   * 
+   *
    */
   function __construct($args = []) {
     $this->configure($args);
@@ -107,7 +107,7 @@ class RoyalMail {
 
   /**
    * Get the appropriate connector class
-   * 
+   *
    * @return \RoyalMail\Connector\baseConnector Variation on...
    */
   function getConnector() {
@@ -126,16 +126,16 @@ class RoyalMail {
 
   /**
    * Set up config values, these are merged with the defaults.
-   * 
-   * @param array 
-   * 
+   *
+   * @param array
+   *
    * @return RoyalMail\RoyalMail $this
    */
   function configure($config = []) {
     $this->config = array_replace_recursive($this->config, $this->modes[@$config['mode'] ?: $this->config['mode']]);
-    
+
     $this->config = array_replace_recursive($this->config, $config);
-    
+
     return $this;
   }
 
@@ -170,4 +170,4 @@ class RoyalMail {
 
     throw new \BadMethodCallException('Action "' . $method . '"" not configured.');
   }
-} 
+}
